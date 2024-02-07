@@ -191,9 +191,12 @@ class BinarySearchTree {
     let parent;
 
     while (nodeToRemove.val !== val) {
-      parent= nodeToRemove;
-      if (val < nodeToRemove.val) nodeToRemove = nodeToRemove.left;
-      if (val > nodeToRemove.val) nodeToRemove = nodeToRemove.right;
+      parent = nodeToRemove;
+      if (val < nodeToRemove.val) {
+        nodeToRemove = nodeToRemove.left;
+      } else {
+        nodeToRemove = nodeToRemove.right;
+      }
     }
 
     if (nodeToRemove !== this.root) {
@@ -254,26 +257,32 @@ class BinarySearchTree {
   isBalanced(current = this.root) {
     if (current === null) return;
 
-    return maxDepth(current) - minDepth(current) <= 1;
+    function checkBalance(node) {
+      if (node === null) {
+        return true;
+      }
 
-    function maxDepth(current) {
-      if (current === null) return;
+      function maxDepth(current) {
+        if (current === null) return 0;
+        return 1 + Math.max(maxDepth(current.left), maxDepth(current.right));
+      }
 
-      return 1 + Math.max(maxDepth(current.left), maxDepth(current.right));
+      const leftDepth = maxDepth(node.left);
+      const rightDepth = maxDepth(node.right);
+      const heightDiff = Math.abs(leftDepth - rightDepth);
+      if (heightDiff > 1) {
+        return false;
+      }
+      return checkBalance(node.left) && checkBalance(node.right);
     }
-
-    function minDepth(current) {
-      if (current === null) return;
-
-      return 1 + Math.min(minDepth(current.left), minDepth(current.right));
-    }
+    return checkBalance(current);
   }
 
   /** Further Study!
    * findSecondHighest(): Find the second highest value in the BST, if it exists.
    * Otherwise return undefined. */
 
-  findSecondHighest() {
+  findSecondHighest(current = this.root) {
     // if the tree is empty or too small, return
     if (!this.root || (!this.root.left && !this.root.right)) return;
 
